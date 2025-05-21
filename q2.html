@@ -1,0 +1,108 @@
+<html>
+    <body>
+        <script>
+            let product=[
+                {id:1,name:"apple",category:"fruits",price:120,stock:20},
+                {id:2,name:"orange",category:"fruits",price:90,stock:56},
+                {id:3,name:"carrot",category:"vegetable",price:75,stock:35},
+                {id:4,name:"biscuts",category:"snacks",price:20,stock:5},
+                {id:5,name:"pepsi",category:"softdrinks",price:86,stock:98},
+                {id:6,name:"watch",category:"electronics",price:1200,stock:17}
+            ];
+            console.log(product);
+            function addProduct(product){
+                let ID = +prompt("Enter the id:");
+                while(isNaN(ID)||(product.find(item=> item.id==ID))!== undefined){
+                    ID= +prompt("Enter a Unique ID:");
+                }
+                let name = prompt("enter the product name:");
+                let category = prompt(`enter the category of ${name}:`);
+                let price = +prompt(`enter the price of ${name}:`);
+                let stock = +prompt(`enter the stock of ${name}:`);
+                let newproduct={id:ID,name:name,category:category,price:price,stock:stock};
+                product.push(newproduct);            
+                alert(`After Adding Product: ${JSON.stringify(product)}`);
+            }
+            function updateProduct(product){
+                let ID = +prompt("Enter the id:");
+                while(isNaN(ID)||(product.find(item=> item.id==ID))== undefined){
+                    ID=prompt("Enter a valid ID:");
+                }
+                let finder=product.find(item=> item.id == ID);
+                let stock = +prompt(`enter the NewStock of ${finder.name}:`);
+                finder.stock = stock;
+                alert(`After Update Product: ${JSON.stringify(finder)}`)
+            }
+            function deleteProduct(id){
+                let ID = +prompt("Enter the id:");
+                while(isNaN(ID)||(product.find(item=> item.id==ID))== undefined){
+                    ID=+prompt("Enter a valid ID:");
+                }
+                let index=product.findIndex(item=> item.id == ID);
+                product.splice(index,1);
+                alert(`After Deleting: ${JSON.stringify(product)}`);
+            }
+            function filterByCategory(product){
+                let categ=prompt("enter the category:");
+                while((product.find(item=> item.category==categ))== undefined){
+                    categ = prompt("Enter a valid category:");
+                }
+                let filtered=product.filter((item)=> item.category == categ);
+                alert(`After Filtered By Category: ${JSON.stringify(filtered)}`);
+            }
+            function calculateInventoryValue(product){
+                let stocks=product.filter((item)=> item.stock > 0);
+                let totalvalue=0;
+                for(let i=0;i<stocks.length;i++){
+                    totalvalue += stocks[i].stock * stocks[i].price;
+                }
+                alert(`Total value : ${totalvalue}`);
+                
+            }
+            function searchProducts(product){
+                let name = prompt("enter the product name:");
+                while((product.find(item=> item.name==name)) == undefined){
+                    name=prompt("Enter a Valid Product:");
+                }
+                let searchProduct=product.filter((item)=> item.name == name);
+                alert(`Product:${JSON.stringify(searchProduct)}`);
+            }
+            function sortByPrice(product){
+                alert(`After Sort By Price :\n ${JSON.stringify(product.sort((firstItem,secondItem)=> firstItem.price - secondItem.price))}`);
+            }
+
+            let flag=1;
+            while(flag==1){
+           let select=+prompt("Select Option:\n 1: Add Product \n 2: Update Stock \n 3: Delete Product \n 4: Filter By Category \n 5: Calculate Inventory Value \n 6: Search Products \n 7: Sort By Price \n Type \"exit\" for exit from the system");
+           switch(select){
+            case (1): 
+                addProduct(product);
+                break;
+            case (2): 
+                updateProduct(product);
+                break;
+            case(3):
+                deleteProduct(product);
+                break;
+            case (4):
+                filterByCategory(product);
+                break;
+            case (5):
+                calculateInventoryValue(product);
+                break;
+            case (6):
+                searchProducts(product);
+                break;
+            case (7):
+                sortByPrice(product);
+                break;
+            default:
+                flag=0;
+                alert("exit");
+                break;
+           } 
+        }
+           
+        </script>
+    </body>
+</html>
