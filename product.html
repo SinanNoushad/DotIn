@@ -1,0 +1,172 @@
+<html>
+    <head>
+        <style>
+            body{
+                background-color: rgb(51, 51, 51);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .main{
+                background-color: rgb(145, 145, 145);
+                height: 500px;
+                width: 500px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-around;
+            }
+            button{
+                background-color: rgb(107, 139, 177);
+                width: 150px;
+                height: 40px;
+                font-family: 'Courier New', Courier, monospace;
+                font-size:12px;
+                font-weight: 900;
+                border: none;
+            }
+            #popuppara{
+                background-color:rgb(160, 160, 160) ;
+                width: 460px;
+                height: 400px;
+
+            }
+            #popup{
+                background-color: rgb(145, 145, 145);
+                height: 500px;
+                width: 500px;
+                display: none;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+            }
+            #popupback{
+                background-color: rgb(56, 56, 56);
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="main" id="main">
+            <button onclick="display(addProduct(product))" >Add Product</button>
+            <button onclick="display(updateProduct(product))">Update Product</button>
+            <button onclick="display(deleteProduct(product))">Delete Product</button>
+            <button onclick="display(filterByCategory(product))">Filter By Category</button>
+            <button onclick="display(calculateInventoryValue(product))">Calculate Inventory Value</button>
+            <button onclick="display(searchProducts(product))">Search Products</button>
+            <button onclick="display(sortByPrice(product))">Sort By Price</button>
+        </div>
+        <div id="popup">
+        <p id="popuppara"></p>
+        <button id="popupback" onclick="goback()">GO BACK</button>
+        </div>
+
+        <script>
+            let product=[
+                {id:1,name:"apple",category:"fruits",price:120,stock:20},
+                {id:2,name:"orange",category:"fruits",price:90,stock:56},
+                {id:3,name:"carrot",category:"vegetable",price:75,stock:35},
+                {id:4,name:"biscuts",category:"snacks",price:20,stock:5},
+                {id:5,name:"pepsi",category:"softdrinks",price:86,stock:98},
+                {id:6,name:"watch",category:"electronics",price:1200,stock:17}
+            ];
+            console.log(product);
+            function addProduct(product){
+                let ID = prompt("Enter the id:");
+                if(ID === null){
+                    return;
+                }
+                while(isNaN(ID)||(product.find(item=> item.id==ID))!== undefined){
+                    ID= prompt("Enter a Unique ID:");
+                }
+                let name = prompt("enter the product name:");
+                let category = prompt(`enter the category of ${name}:`);
+                let price = +prompt(`enter the price of ${name}:`);
+                let stock = +prompt(`enter the stock of ${name}:`);
+                let newproduct={id:+ID,name:name,category:category,price:price,stock:stock};
+                product.push(newproduct);            
+                return(`After Adding Product: ${JSON.stringify(product)}`);
+            }
+            function updateProduct(product){
+                let ID = prompt("Enter the id:");
+                if(ID === null){
+                    return;
+                }
+                while(isNaN(ID)||(product.find(item=> item.id==ID))== undefined){
+                    ID=prompt("Enter a valid ID:");
+                }
+                let finder=product.find(item=> item.id == ID);
+                let stock = +prompt(`enter the NewStock of ${finder.name}:`);
+                finder.stock = stock;
+                return(`After Update Product: ${JSON.stringify(finder)}`)
+            }
+            function deleteProduct(id){
+                let ID = prompt("Enter the id:");
+                if(ID === null){
+                    return;
+                }
+                while(isNaN(ID)||(product.find(item=> item.id==ID))== undefined){
+                    ID=prompt("Enter a valid ID:");
+                }
+                let index=product.findIndex(item=> item.id == +ID);
+                product.splice(index,1);
+                return(`After Deleting: ${JSON.stringify(product)}`);
+            }
+            function filterByCategory(product){
+                let categ=prompt("enter the category:");
+                if(categ === null){
+                    return;
+                }
+                while((product.find(item=> item.category==categ))== undefined){
+                    categ = prompt("Enter a valid category:");
+                }
+                let filtered=product.filter((item)=> item.category == categ);
+                return(`After Filtered By Category: ${JSON.stringify(filtered)}`);
+            }
+            function calculateInventoryValue(product){
+                let stocks=product.filter((item)=> item.stock > 0);
+                let totalvalue=0;
+                for(let i=0;i<stocks.length;i++){
+                    totalvalue += stocks[i].stock * stocks[i].price;
+                }
+                return(`Total value : ${totalvalue}`);
+                
+            }
+            function searchProducts(product){
+                let name = prompt("enter the product name:");
+                if(name === null){
+                    return;
+                }
+                while((product.find(item=> item.name==name)) == undefined){
+                    name=prompt("Enter a Valid Product:");
+                }
+                let searchProduct=product.filter((item)=> item.name == name);
+                return(`Product:${JSON.stringify(searchProduct)}`);
+            }
+            function sortByPrice(product){
+                return(`After Sort By Price :\n ${JSON.stringify(product.sort((firstItem,secondItem)=> firstItem.price - secondItem.price))}`);
+            }
+
+            function display(func){
+                if(func != undefined){
+                const displaypopup=document.getElementById("popup");
+                const displaymain=document.getElementById("main");
+                const displaypara=document.getElementById("popuppara");
+                displaypopup.style.display="flex";
+                displaymain.style.display= 'none';
+                displaypara.innerText = func;
+                displaypara.style.paddingRight="20px";
+            }
+            }
+            function goback(){
+                const displaypopup=document.getElementById("popup");
+                const displaymain=document.getElementById("main");
+                const displaypara=document.getElementById("popuppara");
+                displaypopup.style.display="none";
+                displaymain.style.display= 'flex';
+                displaypara.innerText = '';
+            }
+           
+        </script>
+    </body>
+</html>
