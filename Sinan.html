@@ -1,0 +1,260 @@
+<html>
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">        <style>
+            body{
+                background-color: rgb(58, 58, 58);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .all{
+                width: 400px;
+                height: 500px;
+                display: flex;
+                flex-direction: column;
+                background-color: rgb(196, 196, 196);
+                border-radius: 3vh;
+            }
+            .headtext{
+                font-family: 'Courier New', Courier, monospace;
+                font-size: xx-large;
+                height: 30px;
+                display: flex;
+                justify-content: center;
+                margin-bottom: 30px;
+                margin-top: 20px;
+            }
+            form{
+                display: flex;
+                flex-direction: column;
+                width: 80%;
+                justify-content: center;
+                align-items: center;
+                margin-left: 10%;
+            }
+            .top{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            input{
+                margin-bottom: 15px;
+                border-radius: 4px;
+                height: 35px;
+            }
+            input:focus{
+                outline: 0;
+            }
+            #regbtn{
+                height: 35px;
+                width: 50%;
+                background-color: rgb(95, 92, 88);
+                border:  none;
+                border-radius: 10vh;
+            }
+            .passwordSection{
+                display: flex;
+                flex-direction: row;
+            }
+            #password{
+                width: 100%;
+            } 
+            #showpassword{
+                margin-top: 0;
+            }
+            .gendersection input{
+                height: auto;
+            }
+            .terms input{
+                height: auto;
+            }
+            .loader{
+                position: absolute;
+                left: 52.5%;
+                bottom: 30%;
+                z-index: 1;
+                width: 30px;
+                height: 30px;
+                margin: -76px 0 0 -76px;
+                border: 10px solid #f3f3f3;
+                border-radius: 50%;
+                border-top: 10px solid #363636;
+                -webkit-animation: spin 2s linear infinite;
+                animation: spin 2s linear infinite;
+            }
+            
+            @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+            }
+
+            @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="all">
+            <div class="headtext"><label>Register!!</label></div>
+        <form id="RegisterForm">
+            <div class="top">
+            <input type="text" placeholder="Name" id="name" onchange="validationForm()" >
+            <input type="email" placeholder="Email" id="email" onchange="validationForm()">
+            <div class="passwordSection">
+            <input type="password" placeholder="Password" name="password" id="password" onchange="validationForm()">
+            <input type="checkbox" name="password" id="showpassword" onclick="showpass()" >
+            </div>
+            <input type="number" placeholder="Age" id="age" onchange="validationForm()">
+            </div>
+            <div class="gendersection">
+            <Label>Gender:</Label>
+            <input type="radio" id="Male" name="Gender">
+            <label for="Male">Male</label>
+            <input type="radio" id="Female" name="Gender">
+            <label for="Female">Female</label>
+            </div>
+            <div class="terms">
+            <input type="checkbox" id="termcon" onchange="validationForm()">
+            <label id="termconlbl" for="termcon">Accept Terms And Conditions</label>
+            </div>
+            <button id="regbtn" style="cursor: pointer;" disabled>Register</button>
+            <p id="text" style="display: none"></p>
+            <div id="loader" class="loader" style="display: none;"></div>
+        </form>
+        </div>
+
+
+        <script>
+            const name=document.getElementById("name");
+            const email=document.getElementById("email");
+            const age=document.getElementById("age");
+            const password=document.getElementById("password");
+            const checkbox=document.getElementById("termcon");
+            const checkboxlbl=document.getElementById("termconlbl");
+            const TextWarning=document.getElementById("text");
+            const buttonSubmit = document.getElementById("regbtn");
+            const RegisterForm= document.getElementById("RegisterForm");
+            const loader = document.getElementById("loader");
+            TextWarning.style.whiteSpace = "pre-line";
+            
+            buttonSubmit.addEventListener("click", async function (event) {
+                event.preventDefault();
+                if(!validationForm())return;
+
+                loader.style.display = "block";
+                buttonSubmit.disabled = true;
+
+                const FormData={
+                    name:name.value.trim(),
+                    email:email.value.trim(),
+                    password:password.value,
+                    age:parseInt(age.value),
+                    gender:document.querySelector(`input[name="Gender"]:checked`)?document.querySelector(`input[name="Gender"]:checked`).id :null,
+                    terms:checkbox.checked
+                };
+                try{
+                const response= await fetch('https://jsonplaceholder.typicode.com/posts',{
+                    method:"POST",
+                    headers:{
+                        "content-Type":"application/json"
+                    },
+                    body:JSON.stringify(FormData)
+                });
+
+                loader.style.display = "none";
+                
+                if(response.status === 201){
+
+                    console.log("success",response.status);
+                    TextWarning.style.display="block";
+                    TextWarning.style.color="green";
+                    TextWarning.innerText="Registration successful!";
+                    console.log(FormData);
+                    RegisterForm.reset();
+                    buttonSubmit.disabled=true;
+                }
+                else{
+                    TextWarning.style.display ="block";
+                    TextWarning.style.color="red";
+                    TextWarning.innerText = "An Error Occurs During Registration";
+
+                }
+            }
+            catch(error){
+                loader.style.display = "none";
+                console.error("Network Error",error);
+                TextWarning.style.display ="block";
+                TextWarning.style.color="red";
+                TextWarning.innerText = "Network Error Occurs";
+
+            }
+            });
+            
+            function showpass(){
+                if(password.type == "password"){
+                    password.type = "text";
+                }
+                else{
+                    password.type="password";
+                }
+            }
+
+            function validationForm(){
+                let isValid=true;
+                TextWarning.innerText = "";
+                    if(name.value == "" ){
+                        name.style.borderColor = "red";
+                        TextWarning.innerText +="Enter a Valid Name...\n";
+                        TextWarning.style.display="block";
+                        TextWarning.style.color="red";
+                        isValid=false;
+                    }else{
+                        name.style.borderColor = "";
+                    }
+                    if(email.value == "" || !(email.value.includes("@"))){
+                        email.style.borderColor = "red";
+                        TextWarning.innerText +="Enter a Valid Email...\n";
+                        TextWarning.style.display="block";
+                        TextWarning.style.color="red";
+                        isValid=false;
+                    }else{
+                        email.style.borderColor= "";
+                    }
+                    if(password.value == "" || password.value.length<8){
+                        password.style.borderColor = 'red';
+                        TextWarning.innerText +="Enter a Valid Password...\n";
+                        TextWarning.style.display="block";
+                        TextWarning.style.color="red";
+                        isValid=false;
+                    }else{
+                        password.style.borderColor= "";
+                    }
+                    if(age.value == "" || (age.value < 18 || age.value > 100)){
+                        age.style.borderColor = 'red';
+                        TextWarning.innerText +="Enter a Valid Age...\n";
+                        TextWarning.style.display="block";
+                        TextWarning.style.color="red";
+                        isValid=false;
+                    }else{
+                        age.style.borderColor= "";
+                    }
+                    if(checkbox.checked != true){
+                        TextWarning.innerText +="Accept Terms And Conditions...\n";
+                        TextWarning.style.display="block";
+                        TextWarning.style.color="red";
+                        checkboxlbl.style.color="red";
+                        isValid=false;
+                    }
+                    else{
+                        checkboxlbl.style.color= "";
+                    }
+
+                    buttonSubmit.disabled = !isValid;
+                    return isValid;
+                }
+
+        </script>
+    </body>
+</html>
